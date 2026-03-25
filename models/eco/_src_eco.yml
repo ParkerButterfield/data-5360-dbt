@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: insurance_landing
+    database: firstnamelastname
+    schema: insurance_dw_source
+    tables:
+      - name: CUSTOMER
+      - name: ORDER
+      - name: ORDER_LINE
+      - name: PRODUCT
+      - name: PROMOTIONAL_CAMPAIGN
