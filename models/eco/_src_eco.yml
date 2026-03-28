@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: transactional
+    database: PARKERBUTTERFIELD
+    schema: ECO_DW_SOURCE_ECOESSENTIALS_TRANSACTIONAL_DB
+    tables:
+      - name: CUSTOMER
+      - name: orders
+        identifier: ORDER
+      - name: ORDER_LINE
+      - name: PRODUCT
+      - name: PROMOTIONAL_CAMPAIGN
+
+  - name: marketing
+    database: PARKERBUTTERFIELD
+    schema: DW_ECO
+    tables:
+      - name: MARKETINGEMAILS
