@@ -3,17 +3,52 @@ version: 2
 models:
   - name: oliver_dim_customer
     description: "Oliver Customer Dimension"
+    columns:
+      - name: customer_key
+        tests:
+          - unique
+
   - name: oliver_dim_date
     description: "Oliver Date Dimension"
+    columns:
+      - name: date_key
+        tests:
+          - not_null
+
   - name: oliver_dim_employee
     description: "Oliver Employee Dimension"
+
   - name: oliver_dim_product
     description: "Oliver Product Dimension"
+
   - name: oliver_dim_store
     description: "Oliver Store Dimension"
+
   - name: fact_sales
     description: "Oliver Sales Fact"
+
   - name: stg_employee_certifications
     description: "Staging model that parses certification information from the employee_certifications source table. The JSON field certification_json is flattened into certification_name, certification_cost, and certification_awarded_date so the data can be used in downstream models."
+
   - name: fact_certification
     description: "Fact table containing employee certifications. The grain of this table is one record per employee certification event on the date it was awarded. Each row links an employee and date through surrogate keys from dim_employee and dim_date and records the certification name and certification cost."
+    columns:
+      - name: employee_key
+        tests:
+          - relationships:
+              to: ref('oliver_dim_employee')
+              field: employee_key
+
+      - name: certification_name
+        tests:
+          - accepted_values:
+              values:
+                - "Customer Service Excellence"
+                - "Conflict Resolution"
+                - "Product Knowledge Level 2"
+                - "Inventory Management"
+                - "Workplace Safety"
+                - "Leadership and Coaching"
+                - "Strategic Retail Operations"
+                - "Point of Sale Operations"
+                - "Cash Handling and Security"
