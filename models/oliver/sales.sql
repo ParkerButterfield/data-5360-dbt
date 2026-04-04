@@ -52,7 +52,7 @@ SELECT
     fs.quantity,
     fs.dollars_sold
 
-FROM {{ ref('fact_sales') }} fs
+FROM {{ ref('oliver_fact_sales') }} fs
 LEFT JOIN {{ ref('oliver_dim_customer') }} dc ON fs.customer_key = dc.customer_key
 LEFT JOIN {{ ref('oliver_dim_date') }} dd ON fs.date_key = dd.date_key
 LEFT JOIN {{ ref('oliver_dim_employee') }} de ON fs.employee_key = de.employee_key
