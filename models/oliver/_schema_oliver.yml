@@ -24,7 +24,7 @@ models:
   - name: oliver_dim_store
     description: "Oliver Store Dimension"
 
-  - name: fact_sales
+  - name: oliver_fact_sales
     description: "Oliver Sales Fact"
 
   - name: stg_employee_certifications
