@@ -66,7 +66,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['SENT', 'OPEN', 'CLICK']
+              arguments:
+                values: ['SENT', 'OPEN', 'CLICK']
 
   - name: dim_product
     description: "Dimension table for products."
@@ -90,40 +91,45 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_customer')
-              field: customer_key
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
 
       - name: campaign_key
         description: "Foreign key to dim_campaign."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_campaign')
-              field: campaign_key
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_key
 
       - name: date_key
         description: "Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_date')
-              field: date_key
+              arguments:
+                to: ref('dim_date')
+                field: date_key
 
       - name: event_type_key
         description: "Foreign key to dim_event_type."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_event_type')
-              field: event_type_key
+              arguments:
+                to: ref('dim_event_type')
+                field: event_type_key
 
       - name: email_key
         description: "Foreign key to dim_email."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_email')
-              field: email_key
+              arguments:
+                to: ref('dim_email')
+                field: email_key
 
       - name: event_timestamp
         description: "Timestamp of the email event."
@@ -138,32 +144,36 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_date')
-              field: date_key
+              arguments:
+                to: ref('dim_date')
+                field: date_key
 
       - name: customer_key
         description: "Foreign key to dim_customer."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_customer')
-              field: customer_key
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
 
       - name: product_key
         description: "Foreign key to dim_product."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_product')
-              field: product_key
+              arguments:
+                to: ref('dim_product')
+                field: product_key
 
       - name: campaign_key
         description: "Foreign key to dim_campaign."
         tests:
           - not_null
           - relationships:
-              to: ref('dim_campaign')
-              field: campaign_key
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_key
 
       - name: order_id
         description: "Order identifier from the source system."
