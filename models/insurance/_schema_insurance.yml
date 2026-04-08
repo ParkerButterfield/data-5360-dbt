@@ -1,16 +1,20 @@
 models:
   - name: dim_agent
     description: "Insurance Agent Dimension"
+
   - name: dim_customer_insurance
     description: "Insurance Customer Dimension"
+
   - name: dim_date_insurance
     description: "Insurance Date Dimension"
+
   - name: dim_policy
     description: "Insurance Policy Dimension"
     columns:
       - name: policy_key
         tests:
           - unique
+
   - name: fact_claim
     description: "Insurance Claim Fact"
     columns:
@@ -18,6 +22,7 @@ models:
         description: "A foreign key to the policy dimension"
         tests:
           - not_null
+
   - name: stg_customer_service_interactions
     description: |
       Staging model for customer service interactions.
@@ -26,13 +31,15 @@ models:
       - name: issue_type
         tests:
           - accepted_values:
-              values:
-                - "New Claim"
-                - "Claim Status"
-                - "Policy Change"
-                - "Coverage Info"
-                - "Billing Issue"
-                - "Policy Renewal"  
+              arguments:
+                values:
+                  - "New Claim"
+                  - "Claim Status"
+                  - "Policy Change"
+                  - "Coverage Info"
+                  - "Billing Issue"
+                  - "Policy Renewal"
+
   - name: fact_interaction
     description: |
       Customer Service Interaction Fact.
@@ -42,5 +49,6 @@ models:
       - name: customer_key
         tests:
           - relationships:
-              to: ref('dim_customer') # the model you want to compare to
-              field: customer_key # the field on the model you want to compare to  
+              arguments:
+                to: ref('dim_customer_insurance')
+                field: customer_key
