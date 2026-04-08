@@ -46,8 +46,44 @@ marketing_customers as (
         subscriberemail as email
     from {{ source('marketing', 'MARKETINGEMAILS') }}
 
+),
+
+all_customers as (
+
+    select * from transactional_customers
+    union all
+    select * from marketing_customers
+
+),
+
+deduped as (
+
+    select
+        *,
+        row_number() over (
+            partition by customer_key
+            order by
+                case when email is not null then 0 else 1 end,
+                case when customer_id is not null then 0 else 1 end,
+                last_name,
+                first_name
+        ) as rn
+    from all_customers
+
 )
 
-select * from transactional_customers
-union
-select * from marketing_customers
+select
+    customer_key,
+    customer_id,
+    subscriber_id,
+    first_name,
+    last_name,
+    phone,
+    address,
+    city,
+    state,
+    zip,
+    country,
+    email
+from deduped
+where rn = 1
