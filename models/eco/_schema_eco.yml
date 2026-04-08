@@ -1,0 +1,181 @@
+version: 2
+
+models:
+  - name: dim_campaign
+    description: "Dimension table for promotional campaigns."
+    columns:
+      - name: campaign_key
+        description: "Surrogate key for the campaign dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: campaign_id
+        description: "Business key for the campaign."
+        tests:
+          - not_null
+
+  - name: dim_customer
+    description: "Dimension table for customers from transactional and marketing systems."
+    columns:
+      - name: customer_key
+        description: "Surrogate key for the customer dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: email
+        description: "Customer email address."
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: "Dimension table for calendar dates."
+    columns:
+      - name: date_key
+        description: "Primary key for the date dimension."
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_email
+    description: "Dimension table for marketing emails."
+    columns:
+      - name: email_key
+        description: "Surrogate key for the email dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: email_id
+        description: "Business key for the marketing email."
+        tests:
+          - not_null
+
+  - name: dim_event_type
+    description: "Dimension table for marketing email event types."
+    columns:
+      - name: event_type_key
+        description: "Surrogate key for the event type dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_type
+        description: "Type of marketing email event."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SENT', 'OPEN', 'CLICK']
+
+  - name: dim_product
+    description: "Dimension table for products."
+    columns:
+      - name: product_key
+        description: "Surrogate key for the product dimension."
+        tests:
+          - unique
+          - not_null
+
+      - name: product_id
+        description: "Business key for the product."
+        tests:
+          - not_null
+
+  - name: fact_email_events
+    description: "Fact table for marketing email events."
+    columns:
+      - name: customer_key
+        description: "Foreign key to dim_customer."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_key
+
+      - name: campaign_key
+        description: "Foreign key to dim_campaign."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_key
+
+      - name: date_key
+        description: "Foreign key to dim_date."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
+      - name: event_type_key
+        description: "Foreign key to dim_event_type."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_event_type')
+              field: event_type_key
+
+      - name: email_key
+        description: "Foreign key to dim_email."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_email')
+              field: email_key
+
+      - name: event_timestamp
+        description: "Timestamp of the email event."
+        tests:
+          - not_null
+
+  - name: fact_sales
+    description: "Fact table for sales transactions."
+    columns:
+      - name: date_key
+        description: "Foreign key to dim_date."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
+      - name: customer_key
+        description: "Foreign key to dim_customer."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_key
+
+      - name: product_key
+        description: "Foreign key to dim_product."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_key
+
+      - name: campaign_key
+        description: "Foreign key to dim_campaign."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_campaign')
+              field: campaign_key
+
+      - name: order_id
+        description: "Order identifier from the source system."
+        tests:
+          - not_null
+
+      - name: quantity
+        description: "Quantity sold on the order line."
+        tests:
+          - not_null
+
+      - name: net_sales_amount
+        description: "Sales amount after discount."
+        tests:
+          - not_null
