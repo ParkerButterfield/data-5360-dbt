@@ -231,6 +231,3 @@ The dashboard was designed to answer the following business questions:
 ## Final Thoughts  
 
 This project walks through the full lifecycle of a modern data warehousing solution, from raw data ingestion to business-ready insights. It highlights the importance of clean data modeling, automation, and clear communication when supporting real business decisions.
-## Final Thoughts  
-
-This project walks through the full lifecycle of a modern data warehousing solution, from raw data ingestion to business-ready insights. It shows how important clean data modeling, automation, and clear communication are when supporting real business decisions.
