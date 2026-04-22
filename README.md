@@ -3,7 +3,7 @@
 ## Overview  
 This project is a full end-to-end data pipeline built for **Eco Essentials**, an eco-friendly cookware company. The goal was to take raw data from multiple sources, turn it into a structured data warehouse, and use it to answer real business questions.
 
-This project walks through the full data lifecycle: warehouse design, data ingestion, transformation, testing, automation, and visualization for decision-making. It aligns with all four phases of the data warehousing process.
+This project walks through the full data lifecycle: warehouse design, data ingestion, transformation, testing, automation, and visualization for decision-making.
 
 ---
 
@@ -57,6 +57,49 @@ Contains Salesforce Marketing Cloud email event data:
 
 ---
 
+## Data Warehouse Design  
+
+The data warehouse was designed using a dimensional modeling approach based on two core business processes:
+
+### Sales  
+Tracks customer purchases at the transaction level.  
+- Grain: one row per order line  
+- Used to analyze revenue, product performance, and sales trends  
+
+### Marketing Email Engagement  
+Tracks customer interaction with marketing emails.  
+- Grain: one row per email event (sent, open, click)  
+- Used to analyze campaign performance and engagement  
+
+---
+
+### Design Approach  
+
+A **star schema** was used because it simplifies querying and makes the data easier to analyze in tools like Tableau.
+
+- Fact tables store measurable events (sales and email activity)  
+- Dimension tables store descriptive attributes (customer, product, campaign, date)  
+
+---
+
+### Key Design Decisions  
+
+- **Conformed dimensions** (`DIM_CUSTOMER`, `DIM_DATE`, `DIM_CAMPAIGN`) are shared across fact tables  
+  → This allows marketing activity to be directly linked to sales outcomes  
+
+- **Event modeling using `DIM_EVENT_TYPE`**  
+  → Instead of separate columns for open/click, events are stored as rows for flexibility  
+
+- **Time tracking at multiple levels**  
+  → `date_key` for aggregation  
+  → `event_timestamp` for more detailed analysis  
+
+---
+
+This design allows analysis across the full customer journey, from marketing engagement to actual purchases.
+
+---
+
 ## Data Pipeline Overview  
 
 ### Extract + Load  
@@ -77,26 +120,25 @@ dbt is used to:
 
 ---
 
-### Serve  
-The final data warehouse is exposed for analytics and connected to Tableau through a **live connection**.
-
----
-
 ## Data Model  
 
 The warehouse uses a **star schema design** centered around two business processes:
 
 ### Fact Tables  
-- `fact_sales` → transaction-level sales data  
-- `fact_email_events` → email engagement activity  
+- `FACT_SALES` → transaction-level sales data  
+- `FACT_EMAIL_EVENTS` → email engagement activity  
 
 ### Dimension Tables  
-- `dim_customer`  
-- `dim_product`  
-- `dim_date`  
-- `dim_campaign`  
+- `DIM_CUSTOMER`  
+- `DIM_PRODUCT`  
+- `DIM_DATE`  
+- `DIM_CAMPAIGN`  
+- `DIM_EMAIL`  
+- `DIM_EVENT_TYPE`  
 
 These are **conformed dimensions**, allowing both fact tables to be analyzed together.
+
+Both fact tables share dimensions like `DIM_CUSTOMER`, `DIM_DATE`, and `DIM_CAMPAIGN`, which allows marketing activity (email engagement) to be directly analyzed alongside sales performance.
 
 ---
 
@@ -125,9 +167,9 @@ These help ensure the data warehouse stays reliable and consistent.
 
 To make sure the data stays accurate and up to date:
 
-- dbt tests were implemented across models, including `not_null`, `unique`, `accepted_values`, and `relationships`  
-- Fivetran connectors were scheduled to refresh data every **24 hours**  
-- A dbt job was configured to rebuild models daily  
+- dbt tests were implemented across models  
+- Fivetran connectors refresh data every **24 hours**  
+- A dbt job rebuilds models daily  
 
 This ensures the pipeline runs automatically and maintains data quality without manual work.
 
@@ -135,9 +177,9 @@ This ensures the pipeline runs automatically and maintains data quality without 
 
 ## Dashboard (Tableau – Live Connection)  
 
-A Tableau dashboard was built using a live connection to Snowflake to communicate insights to Eco Essentials leadership.
+The final data warehouse is connected directly to Tableau using a **live connection**, allowing up-to-date data to be used for analysis without manual exports.
 
-The dashboard is designed as a visual story that answers key business questions.
+The dashboard is structured as a story that walks through key business questions and insights.
 
 ### Key Features:
 - KPI card showing total revenue  
@@ -148,78 +190,47 @@ The dashboard is designed as a visual story that answers key business questions.
 
 ---
 
-## Dashboard Preview  
-
-![Eco Essentials Dashboard](./dashboard.png)
-
----
-
 ## Business Questions  
 
 The dashboard was designed to answer the following business questions:
 
 1. **How much total revenue has Eco Essentials generated?**  
-   Provides a high-level view of overall performance.
-
 2. **How are sales trending over time?**  
-   Helps identify growth patterns and slowdowns.
-
-3. **What short-term fluctuations exist in sales, and are there any spikes or drops we should investigate?**  
-   Highlights weekly variability and unusual patterns.
-
+3. **What short-term fluctuations exist in sales?**  
 4. **Which marketing campaigns are driving the most revenue?**  
-   Identifies the campaigns contributing the most value.
-
-5. **How effectively are marketing emails engaging customers at each stage of the funnel?**  
-   Looks at engagement through sent, open, and click events.
+5. **How effectively are marketing emails engaging customers?**
 
 ---
 
 ## Key Insights  
 
-- Total revenue is approximately **$10.6K**, giving a baseline view of overall performance  
+- Total revenue is approximately **$10.6K**, providing a baseline view of performance  
 
 - Sales increase steadily from **January through April**, peaking in April, before declining in May and June  
 
-- Weekly sales show **high volatility**, with noticeable spikes and dips, indicating inconsistent short-term performance  
+- Weekly sales show **noticeable volatility**, with spikes and dips indicating inconsistent short-term performance. High and low spikes pretty consistently alternate each week.
 
-- The **“New Customer Welcome”** and **“Newsletter Subscriber Special”** campaigns generate the most revenue, while several others contribute less  
+- The **“New Customer Welcome”** and **“Newsletter Subscriber Special”** campaigns generate the most revenue  
 
 - Email engagement shows a clear drop-off:  
   - ~34 emails sent  
   - ~26 opened  
   - ~13 clicked  
-  This suggests people are opening emails, but fewer are actually clicking through  
-
----
-
-## Example Use Cases  
-
-- Analyze revenue trends over time  
-- Identify top-performing marketing campaigns  
-- Evaluate email marketing effectiveness  
-- Track customer purchasing behavior  
-
----
-
-## Challenges  
-
-- Combining multiple data sources with different structures  
-- Making sure joins between sales and marketing data were accurate  
-- Debugging dbt model relationships and key mismatches  
-- Designing a clean, easy-to-understand Tableau dashboard  
 
 ---
 
 ## Future Improvements  
 
-- Add deeper customer segmentation (repeat customers, LTV)  
-- Improve tracking from email → purchase  
-- Add more detailed time-based analysis  
-- Make the dashboard more interactive with filters and drilldowns  
+- Add deeper customer segmentation  
+- Improve tracking from email engagement to purchases  
+- Add more granular time-based analysis  
+- Enhance dashboard interactivity  
 
 ---
 
+## Final Thoughts  
+
+This project walks through the full lifecycle of a modern data warehousing solution, from raw data ingestion to business-ready insights. It highlights the importance of clean data modeling, automation, and clear communication when supporting real business decisions.
 ## Final Thoughts  
 
 This project walks through the full lifecycle of a modern data warehousing solution, from raw data ingestion to business-ready insights. It shows how important clean data modeling, automation, and clear communication are when supporting real business decisions.
